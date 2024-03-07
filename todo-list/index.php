@@ -11,7 +11,7 @@ require_once 'fw/header.php';
 <h2>Welcome, <?php echo $_COOKIE['username']; ?>!</h2>
 
 
-<?php 
+<?php
     if (isset($_COOKIE['userid'])) {
         require_once 'user/tasklist.php';
         echo "<hr />";
