@@ -1,0 +1,21 @@
+version: '3.9'
+name: m183_lb2
+services:
+    db:
+      image: "mariadb:latest"
+      container_name: m183-lb2-db
+      ports:
+        - "3306:3306"
+      environment:
+        - MARIADB_ROOT_PASSWORD=Some.Real.Secr3t
+    web:
+      build: .
+      container_name: m183-lb2-web
+      environment:
+        - DBSERVER=m183-lb2-db
+      ports:
+        - "80:80"
+      volumes:
+        - type: bind
+          source: C:\Dev\m183-LB2\todo-list
+          target: /var/www/html
