@@ -14,24 +14,33 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['username']) && isset($_G
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
+    
     // Prepare SQL statement to retrieve user from database
-    $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE username='$username'");
+    $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE username=?");
+
+    // Bind parameters
+    $stmt->bind_param("s", $username);
 
     // Execute the statement
     $stmt->execute();
+
     // Store the result
     $stmt->store_result();
+
     // Check if username exists
     if ($stmt->num_rows > 0) {
         // Bind the result variables
         $stmt->bind_result($db_id, $db_username, $db_password);
+
         // Fetch the result
         $stmt->fetch();
+
         // Verify the password
-        if ($password == $db_password) {
+        if (password_verify($password, $db_password)) {
             // Password is correct, store username in session
             setcookie("username", $username, -1, "/"); // 86400 = 1 day
             setcookie("userid", $db_id, -1, "/"); // 86400 = 1 day
+            
             // Redirect to index.php
             header("Location: index.php");
             exit();
@@ -51,14 +60,16 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['username']) && isset($_G
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
 </head>
+
 <body>
     <h2>Login</h2>
-    <form action="<?php $_SERVER["PHP_SELF"]; ?>" method="get">
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="get">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required><br><br>
         <label for="password">Password:</label>
@@ -66,4 +77,5 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['username']) && isset($_G
         <button type="submit">Login</button>
     </form>
 </body>
+
 </html>
