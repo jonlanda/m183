@@ -83,6 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['username']) && isset($_G
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br><br>
         <button type="submit">Login</button>
+        <p><a href="enter_email.php">Forgot your password?</a></p>
     </form>
 </body>
 
