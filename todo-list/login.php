@@ -2,10 +2,9 @@
 require_once 'config.php';
 
 // Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($_POST['password'])) {
-    // Get username and password from the form
-    $username = $_GET['username'];
-    $password = $_GET['password'];
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username'], $_POST['password'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
     
     // Connect to the database
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
@@ -63,6 +62,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($
     }
 
     $stmt->close();
+}else {
+    // Handle the case where the form isn't submitted yet or data is missing.
+    // For example, you might want to exit the script or show an error message.
+    echo "Please submit the form.";
+    exit;
 }
 ?>
 
