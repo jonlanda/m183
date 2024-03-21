@@ -2,7 +2,7 @@
 require_once 'config.php';
 
 // Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['username']) && isset($_GET['password'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($_POST['password'])) {
     // Get username and password from the form
     $username = $_GET['username'];
     $password = $_GET['password'];
@@ -77,14 +77,14 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['username']) && isset($_G
 
 <body>
     <h2>Login</h2>
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="get">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <button type="submit">Login</button>
-        <p><a href="enter_email.php">Forgot your password?</a></p>
-    </form>
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required><br><br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required><br><br>
+    <button type="submit">Login</button>
+    <p><a href="enter_email.php">Forgot your password?</a></p>
+</form>
 </body>
 
 </html>
