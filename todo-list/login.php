@@ -3,9 +3,9 @@ require_once 'config.php';
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username'], $_POST['password'])) {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    
+    $username = isset($_POST['username']);
+    $password = isset($_POST['password']);
+
     // Connect to the database
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
@@ -62,11 +62,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username'], $_POST['pa
     }
 
     $stmt->close();
-}else {
-    // Handle the case where the form isn't submitted yet or data is missing.
-    // For example, you might want to exit the script or show an error message.
-    echo "Please submit the form.";
-    exit;
 }
 ?>
 
@@ -82,13 +77,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username'], $_POST['pa
 <body>
     <h2>Login</h2>
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required><br><br>
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required><br><br>
-    <button type="submit">Login</button>
-    <p><a href="enter_email.php">Forgot your password?</a></p>
-</form>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        <button type="submit">Login</button>
+        <p><a href="enter_email.php">Forgot your password?</a></p>
+    </form>
 </body>
 
 </html>
