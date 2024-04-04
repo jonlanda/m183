@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['username']) && isset($_G
     // Get username and password from the form
     $username = $_GET['username'];
     $password = $_GET['password'];
-    
+
     // Connect to the database
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
@@ -77,7 +77,8 @@ require_once 'fw/header.php';
     </div>
     <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" class="form-control size-medium" name="password" id="password"> <!-- Changed type to password -->
+        <input type="password" class="form-control size-medium" name="password" id="password">
+        <!-- Changed type to password -->
     </div>
     <div class="form-group">
         <input type="submit" class="btn size-auto" value="Login" />
