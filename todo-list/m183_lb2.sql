@@ -58,8 +58,8 @@ CREATE TABLE `users` (
   `ID` bigint(20) NOT NULL,
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `first_failed_login` int NOT NULL
-  `failed_login_count` int NOT NULL
+  `first_failed_login` int NULL,
+  `failed_login_count` int NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb3 COLLATE = utf8mb3_general_ci;
 --
 -- Indizes der exportierten Tabellen
