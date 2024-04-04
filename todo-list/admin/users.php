@@ -1,26 +1,33 @@
 <?php
-    if (!isset($_COOKIE['username'])) {
-        header("Location: ../login.php");
-        exit();
-    }
+// Check if the user is logged in
+if (!isset($_COOKIE['username'])) {
+    header("Location: ../login.php");
+    exit();
+}
 
-    require_once '../config.php';
-    $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+// Include configuration file and establish database connection
+require_once '../config.php';
+$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-    // Prepare SQL statement to retrieve user from database
-    $stmtU = $conn->prepare("SELECT users.ID, users.username, users.password, roles.title FROM users inner join permissions on users.ID = permissions.userID inner join roles on permissions.roleID = roles.ID order by username");
-    // Execute the statement
-    $stmtU->execute();
-    // Store the result
-    $stmtU->store_result();
-    // Bind the result variables
-    $stmtU->bind_result($db_id, $db_username, $db_password, $db_title);
+// Check database connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
-    require_once '../fw/header.php';
+// Prepare SQL statement to retrieve users from the database
+$stmt = $conn->prepare("SELECT users.ID, users.username, roles.title FROM users INNER JOIN permissions ON users.ID = permissions.userID INNER JOIN roles ON permissions.roleID = roles.ID ORDER BY username");
+
+// Execute the statement
+$stmt->execute();
+
+// Store the result
+$stmt->store_result();
+
+// Bind the result variables
+$stmt->bind_result($db_id, $db_username, $db_title);
+
+// Include header
+require_once '../fw/header.php';
 ?>
 <h2>User List</h2>
 
@@ -32,12 +39,13 @@
     </tr>
     <?php
         // Fetch the result
-        while ($stmtU->fetch()) {
-            echo "<tr><td>$db_id</td><td>$db_username</td><td>$db_title</td><input type='hidden' name='password' value='$db_password' /></tr>";
+        while ($stmt->fetch()) {
+            echo "<tr><td>$db_id</td><td>$db_username</td><td>$db_title</td></tr>";
         }
     ?>
 </table>
 
 <?php
-    require_once '../fw/footer.php';
+// Include footer
+require_once '../fw/footer.php';
 ?>
