@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['username']) && isset($_G
             exit;
         }
 
-        if (password_verify($password, $db_password)) {
+        if ($password == $db_password) {
             $reset_stmt = $conn->prepare("UPDATE users SET first_failed_login = 0, failed_login_count = 0 WHERE username=?");
             $reset_stmt->bind_param("s", $username);
             $reset_stmt->execute();
