@@ -3,7 +3,7 @@ require_once 'config.php';
 
 // Constants for brute force protection
 $bad_login_limit = 3; // Number of allowed failed attempts
-$lockout_time = 600; // Lockout period in seconds (10 minutes)
+$lockout_time = 5; // Lockout period in seconds (10 minutes)
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['username']) && isset($_GET['password'])) {
