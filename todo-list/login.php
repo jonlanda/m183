@@ -4,8 +4,11 @@ require_once 'config.php';
 // Constants for brute force protection
 $bad_login_limit = 3; // Number of allowed failed attempts
 $lockout_time = 10; // Lockout period in seconds (10 seconds)
+$lockout_time = 24 * 60 * 60; // Lockout period in seconds (24 hours)
 $username_error = "";
 $password_error = "";
+
+$login_error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_POST["username"])) {
@@ -15,6 +18,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $password_error = "Password is required";
     }
 }
+
+
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($_POST['password'])) {
@@ -34,21 +39,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($
     //$username = $conn->real_escape_string($username);
     //$password = $conn->real_escape_string($password);
 
+
     
 
 
     // Prepare SQL statement to retrieve user from database
-    $stmt = $conn->prepare("SELECT id, username, password, last_login, failed_login_count FROM users WHERE username=?");
+    $stmt = $conn->prepare("SELECT id, username, password, last_login, failed_login_count, blocked_until FROM users WHERE username=?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($db_id, $db_username, $db_password, $last_login, $failed_login_count);
+        $stmt->bind_result($db_id, $db_username, $db_password, $last_login, $failed_login_count, $blocked_until);
         $stmt->fetch();
+
+
+        if ($blocked_until != null && strtotime($blocked_until) > time()) {
+            header("Location: blocked.php");
+            exit;
+        }
         
 
-        if ($password == $db_password) {
+        if (password_verify($password, $db_password)) {
             $current_time = date("Y-m-d H:i:s");
             $reset_stmt = $conn->prepare("UPDATE users SET last_login = ?, failed_login_count = 0 WHERE username=?");
             $reset_stmt->bind_param("ss", $current_time, $username);
@@ -81,16 +93,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($
             $update_stmt->close();
 
             if ($failed_login_count >= $bad_login_limit && (time() - strtotime($last_login) < $lockout_time)) {
-                echo "You are currently locked out. Please try again later.";
-                echo "<script>alert('You are currently locked out. Please try again later.');</script>";
+
+
+                $stmt = $conn->prepare("UPDATE users SET blocked_until = DATE_ADD(NOW(), INTERVAL 24 HOUR) WHERE username = ?");
+                $stmt->bind_param("s", $username);
+                $stmt->execute();
+                $stmt->close();
+                header("Location: blocked.php");
                 exit;
             }
 
-            $password_error = "Invalid password";
+            // $password_error = "Invalid password";
+            $login_error = "Invalid username or password";
         
         }
     } else {
-        $username_error = "Username does not exist";
+        // $username_error = "Username does not exist";
+        $login_error = "Invalid username or password";
     }
 
     $stmt->close();
@@ -106,12 +125,12 @@ require_once 'fw/header.php';
             <label for="username">Username</label>
             <input type="text" class="form-control size-medium" name="username" id="username">
         </div>
-        <span class="error"><?php echo $username_error;?></span>
+        <span class="error"><?php echo $username_error . $login_error; ?></span>
     </div>
     <div class="form-group">
         <label for="password">Password</label>
         <input type="password" class="form-control size-medium" name="password" id="password">
-        <span class="error"><?php echo $password_error;?></span>
+        <span class="error"><?php echo $password_error . $login_error; ?></span>
     </div>
     <div class="form-group">
         <input type="submit" class="btn size-auto" value="Login" />

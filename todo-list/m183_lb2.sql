@@ -20,9 +20,11 @@ SET time_zone = "+00:00";
 --
 -- Datenbank: `m183_lb2`
 --
--- DROP DATABASE IF EXISTS m183_lb2;	
--- CREATE Database m183_lb2;
+DROP DATABASE IF EXISTS m183_lb2;	
+CREATE Database m183_lb2;
 use m183_lb2;
+
+-- select * from users;
 -- --------------------------------------------------------
 --
 -- Tabellenstruktur für Tabelle `permissions`
@@ -60,6 +62,7 @@ CREATE TABLE `users` (
   `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `last_login` DATETIME NULL DEFAULT NULL,
   `failed_login_count` int(11) DEFAULT 0,
+  `blocked_until` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
@@ -116,9 +119,9 @@ values (2, 'User');
 insert into roles (ID, title)
 values (1, 'Admin');
 insert into users (ID, username, password)
-values (1, 'admin1', 'Awesome.Pass34');
+values (1, 'admin1', '$2y$10$y8pUgWRjsyt2ofJozlgnw.hUoJ2IL6e.P1om718iKENYGWZl1lAUy');
 insert into users (ID, username, password)
-values (2, 'user1', 'Amazing.Pass23');
+values (2, 'user1', '$2y$10$OsAcODAmGWKGTwaXbpZgceOurlddqSDJ/G6R3R3zvViDJGUz80Zn.');
 insert into permissions(ID, userID, roleID)
 values(null, 1, 1);
 insert into permissions(ID, userID, roleID)

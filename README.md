@@ -12,3 +12,11 @@ Bevor mit `docker compose up` die Applikation gestartet wird, muss der Source-Pf
 
 - [x] SQL Injection
 - [x] Password Hashing not implemented
+
+## Password Plaintext
+
+- Username: `admin1`
+- Password: `Awesome.Pass34`
+
+- Username: `user1`
+- Password: `Amazing.Pass23`

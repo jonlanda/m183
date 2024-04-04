@@ -92,7 +92,6 @@ table td.wide {
 
 .flex {
   display: flex;
-  flex-direction: row;
 }
 
 .form-group {
