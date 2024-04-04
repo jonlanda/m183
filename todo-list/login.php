@@ -19,6 +19,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($
         die("Connection failed: " . $conn->connect_error);
     }
 
+    // Sanitize user input
+    //$username = $conn->real_escape_string($username);
+    //$password = $conn->real_escape_string($password);
+
+    
+
+
     // Prepare SQL statement to retrieve user from database
     $stmt = $conn->prepare("SELECT id, username, password, last_login, failed_login_count FROM users WHERE username=?");
     $stmt->bind_param("s", $username);
@@ -28,19 +35,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($
     if ($stmt->num_rows > 0) {
         $stmt->bind_result($db_id, $db_username, $db_password, $last_login, $failed_login_count);
         $stmt->fetch();
-
-        if (is_numeric($failed_login_count) == false) {
-            echo "Failed login count is not numeric.";
-        }
-        if (is_numeric($last_login) == false) {
-            echo "Last login is not numeric.";
-            echo "$last_login"
-            echo gettype($last_login);
-        }
-        if (is_numeric($lockout_time) == false) {
-            echo "lockout_time is not numeric.";
-        }
-
+        
+        // if (!is_numeric($last_login)) {
+        //     $last_login = strtotime($last_login);
+        // }
 
         if ($failed_login_count >= $bad_login_limit && (time() - $last_login < $lockout_time)) {
             echo "<script>alert('You are currently locked out. Please try again later.');</script>";

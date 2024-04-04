@@ -20,7 +20,7 @@ SET time_zone = "+00:00";
 --
 -- Datenbank: `m183_lb2`
 --
-DROP DATABASE IF EXISTS m183_lb2;
+DROP DATABASE IF EXISTS m183_lb2;	
 CREATE Database m183_lb2;
 use m183_lb2;
 -- --------------------------------------------------------
@@ -84,8 +84,8 @@ ADD PRIMARY KEY (`ID`);
 --
 -- Indizes für die Tabelle `users`
 --
-ALTER TABLE `users`
-ADD PRIMARY KEY (`ID`);
+-- ALTER TABLE `users`
+-- ADD PRIMARY KEY (`ID`);
 --
 -- AUTO_INCREMENT für exportierte Tabellen
 --
