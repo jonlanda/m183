@@ -30,6 +30,7 @@ $stmt->store_result();
 // Bind the result variables
 $stmt->bind_result($db_id, $db_title, $db_state);
 ?>
+<a href="changepassword.php">Change Password</a>
 <section id="list">
     <a href="edit.php">Create Task</a>
     <table>

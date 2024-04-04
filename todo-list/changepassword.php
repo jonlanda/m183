@@ -2,14 +2,12 @@
 require_once 'config.php';
 session_start();
 
-if (!isset($_SESSION['userid'])) {
-    header("Location: login.php");
-    exit;
-}
-
-$userId = $_SESSION['userid'];
 $message = '';
-
+$username = $_COOKIE['username'];
+if (!isset($username)) {
+    header("Location: login.php");
+    exit();
+}
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['currentPassword']) && isset($_POST['newPassword'])) {
     // Get passwords from the form
@@ -25,8 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['currentPassword']) && 
     }
 
     // Prepare SQL statement to retrieve the current password from the database
-    $stmt = $conn->prepare("SELECT password FROM users WHERE id=?");
-    $stmt->bind_param("i", $userId);
+    $stmt = $conn->prepare("SELECT password FROM users WHERE username=?");
+    $stmt->bind_param("s", $username);
     $stmt->execute();
     $stmt->store_result();
 
@@ -37,8 +35,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['currentPassword']) && 
         if ($currentPassword == $db_password) {
             $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
 
-            $update_stmt = $conn->prepare("UPDATE users SET password=? WHERE id=?");
-            $update_stmt->bind_param("si", $hashedPassword, $userId);
+            $update_stmt = $conn->prepare("UPDATE users SET password=? WHERE username=?");
+            $update_stmt->bind_param("ss", $hashedPassword, $username);
             $update_stmt->execute();
 
             if ($update_stmt->affected_rows > 0) {

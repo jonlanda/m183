@@ -55,12 +55,14 @@ CREATE TABLE `tasks` (
 -- Tabellenstruktur für Tabelle `users`
 --
 CREATE TABLE `users` (
-  `ID` bigint(20) NOT NULL,
-  `username` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `first_failed_login` int NULL,
-  `failed_login_count` int NULL
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb3 COLLATE = utf8mb3_general_ci;
+  `ID` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `last_login` DATETIME NULL DEFAULT NULL,
+  `failed_login_count` int(11) DEFAULT 0,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 --
 -- Indizes der exportierten Tabellen
 --
