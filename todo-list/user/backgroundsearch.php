@@ -1,24 +1,22 @@
 <?php
-// Check if the user is logged in
-if (!isset($_COOKIE['username'])) {
-    header("Location: ../login.php");
-    exit();
-}
+    if (!isset($_COOKIE['username'])) {
+        header("Location: ../login.php");
+        exit();
+    }
 
-// Include database connection
-include 'fw/db.php';
+    require_once 'fw/db.php';
 ?>
-
 <section id="search">
     <h2>Search</h2>
     <form id="form" method="post" action="">
-        <input type="hidden" id="searchurl" name="searchurl" value="/search/v2/">
+        <input type="hidden" id="searchurl" name="searchurl" value="/search/v2/" />
         <div class="form-group">
-            <label for="terms">Terms</label>
-            <input type="text" class="form-control size-medium" name="terms" id="terms" required>
+            <label for="terms">terms</label>
+            <input type="text" class="form-control size-medium" name="terms" id="terms">
         </div>
         <div class="form-group">
-            <input id="submit" type="submit" class="btn size-auto" value="Submit">
+            <label for="submit" ></label>
+            <input id="submit" type="submit" class="btn size-auto" value="Submit" />
         </div>
     </form>
     <div id="messages">
@@ -26,34 +24,31 @@ include 'fw/db.php';
         <div id="result" class="hidden"></div>
     </div>
     <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#form').validate({
-            rules: {
-                terms: {
-                    required: true
-                }
-            },
-            messages: {
-                terms: 'Please enter search terms.'
-            },
-            submitHandler: function(form) {
-                var provider = $("#searchurl").val();
-                var terms = $("#terms").val();
-                var userid = <?php echo $_COOKIE["userid"] ?>;
-                $("#msg").show();
-                $("#result").html("");
-                $.post("search.php", {
-                    provider: provider,
-                    terms: terms,
-                    userid: userid
-                }, function(data) {
-                    console.log(data);
-                    $("#result").html(data);
-                    $("#msg").hide(500);
-                    $("#result").show(500);
-                });
-                return false;
+        rules: {
+            terms: {
+            required: true
             }
+        },
+        messages: {
+            title: 'Please enter search terms.',
+        },
+        submitHandler: function (form) {
+            provider = $("#searchurl").val();
+            terms = $("#terms").val();
+            userid = <?php echo $_COOKIE["userid"] ?>;
+            $("#msg").show();
+            $("#result").html("");
+            $.post("search.php", { provider: provider, terms: terms, userid: userid }, function(data){
+                console.log(data);
+                $("#result").html(data);
+                $("#msg").hide(500);
+                $("#result").show(500);
+            });
+            return false;
+            //form.submit();
+        }
         });
     });
     </script>
