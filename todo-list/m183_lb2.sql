@@ -20,8 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Datenbank: `m183_lb2`
 --
-DROP DATABASE IF EXISTS m183_lb2;	
-CREATE Database m183_lb2;
+-- DROP DATABASE IF EXISTS m183_lb2;	
+-- CREATE Database m183_lb2;
 use m183_lb2;
 -- --------------------------------------------------------
 --

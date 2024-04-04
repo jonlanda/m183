@@ -36,14 +36,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($
         $stmt->bind_result($db_id, $db_username, $db_password, $last_login, $failed_login_count);
         $stmt->fetch();
         
-        // if (!is_numeric($last_login)) {
-        //     $last_login = strtotime($last_login);
-        // }
-
-        if ($failed_login_count >= $bad_login_limit && (time() - $last_login < $lockout_time)) {
-            echo "<script>alert('You are currently locked out. Please try again later.');</script>";
-            exit;
-        }
 
         if ($password == $db_password) {
             $current_time = date("Y-m-d H:i:s");
@@ -59,21 +51,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($
         } else {
             $current_time = time();
             $last_login_time = date("Y-m-d H:i:s", $current_time);
+
+            //ehco $current_time - strtotime($last_login) > $lockout_time
+
+
             if ($last_login == 0 || $current_time - strtotime($last_login) > $lockout_time) {
                 $failed_login_count = 1;
+                // Update last_login timestamp and failed_login_count
+                $update_stmt = $conn->prepare("UPDATE users SET last_login = ?, failed_login_count = ? WHERE username=?");
+                $update_stmt->bind_param("sis", $last_login_time, $failed_login_count, $username);
             } else {
                 $failed_login_count++;
+                // Only update failed_login_count
+                $update_stmt = $conn->prepare("UPDATE users SET failed_login_count = ? WHERE username=?");
+                $update_stmt->bind_param("is", $failed_login_count, $username);
             }
 
-            $update_stmt = $conn->prepare("UPDATE users SET last_login = ?, failed_login_count = ? WHERE username=?");
-            $update_stmt->bind_param("sis", $last_login_time, $failed_login_count, $username);
             $update_stmt->execute();
             $update_stmt->close();
 
-           
-            echo "Incorrect password";
-
-            echo "Incorrect password. Failed login count: " . $failed_login_count;
+            if ($failed_login_count >= $bad_login_limit && (time() - strtotime($last_login) < $lockout_time)) {
+                echo "You are currently locked out. Please try again later.";
+                echo "<script>alert('You are currently locked out. Please try again later.');</script>";
+                exit;
+            }
+        
         }
     } else {
         echo "Username does not exist";
