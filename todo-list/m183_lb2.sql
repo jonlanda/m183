@@ -20,12 +20,13 @@ SET time_zone = "+00:00";
 --
 -- Datenbank: `m183_lb2`
 --
+DROP DATABASE IF EXISTS m183_lb2;
 CREATE Database m183_lb2;
+use m183_lb2;
 -- --------------------------------------------------------
 --
 -- Tabellenstruktur für Tabelle `permissions`
 --
-
 CREATE TABLE `permissions` (
   `ID` bigint(20) NOT NULL,
   `userID` bigint(20) NOT NULL,
@@ -35,7 +36,6 @@ CREATE TABLE `permissions` (
 --
 -- Tabellenstruktur für Tabelle `roles`
 --
-
 CREATE TABLE `roles` (
   `ID` bigint(20) NOT NULL,
   `title` varchar(255) NOT NULL
@@ -44,7 +44,6 @@ CREATE TABLE `roles` (
 --
 -- Tabellenstruktur für Tabelle `tasks`
 --
-
 CREATE TABLE `tasks` (
   `ID` bigint(20) NOT NULL,
   `title` varchar(255) NOT NULL,
@@ -55,7 +54,6 @@ CREATE TABLE `tasks` (
 --
 -- Tabellenstruktur für Tabelle `users`
 --
-
 CREATE TABLE `users` (
   `ID` bigint(20) NOT NULL,
   `username` varchar(255) NOT NULL,
@@ -64,7 +62,6 @@ CREATE TABLE `users` (
 --
 -- Indizes der exportierten Tabellen
 --
-
 --
 -- Indizes für die Tabelle `permissions`
 --
@@ -88,7 +85,6 @@ ADD PRIMARY KEY (`ID`);
 --
 -- AUTO_INCREMENT für exportierte Tabellen
 --
-
 --
 -- AUTO_INCREMENT für Tabelle `permissions`
 --
@@ -123,3 +119,5 @@ insert into permissions(ID, userID, roleID)
 values(null, 1, 1);
 insert into permissions(ID, userID, roleID)
 values(null, 2, 2);
+select *
+from users

@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 name: m183_lb2
 services:
   db:
@@ -13,9 +13,10 @@ services:
     container_name: m183-lb2-web
     environment:
       - DBSERVER=m183-lb2-db
+      - PROJECT_PATH=${PROJECT_PATH}
     ports:
-      - "8081:80"
+      - "8081:8081"
     volumes:
       - type: bind
-        source: D:\dokumente\tbz\M183\lb2-applikation-main\m183\todo-list
+        source: C:\Tim-Paris-Schule\Schule\3 Jahr\m183\todo-list
         target: /var/www/html

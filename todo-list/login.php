@@ -2,10 +2,11 @@
 require_once 'config.php';
 
 // Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username'], $_POST['password'])) {
-    $username = isset($_POST['username']);
-    $password = isset($_POST['password']);
-
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['username']) && isset($_GET['password'])) {
+    // Get username and password from the form
+    $username = $_GET['username'];
+    $password = $_GET['password'];
+    
     // Connect to the database
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
@@ -13,77 +14,60 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username'], $_POST['pa
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
-
-    // Check for brute force protection
-    $checkAttempt = $conn->prepare("SELECT failed_login_attempts, last_failed_login FROM users WHERE username=?");
-    $checkAttempt->bind_param("s", $username);
-    $checkAttempt->execute();
-    $checkAttempt->bind_result($failed_attempts, $last_attempt);
-    $checkAttempt->fetch();
-    $checkAttempt->close();
-
-    // Assuming a lockout after 5 failed attempts and a timeout of 30 minutes
-    if ($failed_attempts >= 5 && (time() - strtotime($last_attempt)) < 1800) {
-        die("Account locked due to too many failed login attempts. Please try again later.");
-    }
-
     // Prepare SQL statement to retrieve user from database
-    $stmt = $conn->prepare("SELECT id, username, password, failed_login_attempts, last_failed_login FROM users WHERE username=?");
-    $stmt->bind_param("s", $username);
+    $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE username='$username'");
+
+    // Execute the statement
     $stmt->execute();
+    // Store the result
     $stmt->store_result();
-
+    // Check if username exists
     if ($stmt->num_rows > 0) {
-        $stmt->bind_result($db_id, $db_username, $db_password, $failed_attempts, $last_attempt);
+        // Bind the result variables
+        $stmt->bind_result($db_id, $db_username, $db_password);
+        // Fetch the result
         $stmt->fetch();
-
-        if (password_verify($password, $db_password)) {
-            // Reset failed login attempts on successful login
-            $resetAttempt = $conn->prepare("UPDATE users SET failed_login_attempts = 0, last_failed_login = NULL WHERE username=?");
-            $resetAttempt->bind_param("s", $username);
-            $resetAttempt->execute();
-            $resetAttempt->close();
-
-            setcookie("username", $username, -1, "/");
-            setcookie("userid", $db_id, -1, "/");
+        // Verify the password
+        if ($password == $db_password) {
+            // Password is correct, store username in session
+            setcookie("username", $username, -1, "/"); // 86400 = 1 day
+            setcookie("userid", $db_id, -1, "/"); // 86400 = 1 day
+            // Redirect to index.php
             header("Location: index.php");
             exit();
         } else {
-            // Update failed login attempts
-            $updateAttempt = $conn->prepare("UPDATE users SET failed_login_attempts = failed_login_attempts + 1, last_failed_login = NOW() WHERE username=?");
-            $updateAttempt->bind_param("s", $username);
-            $updateAttempt->execute();
-            $updateAttempt->close();
-
+            // Password is incorrect
             echo "Incorrect password";
         }
     } else {
+        // Username does not exist
         echo "Username does not exist";
     }
 
+    // Close statement
     $stmt->close();
 }
+require_once 'fw/header.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+<h2>Login</h2>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
 
-<body>
-    <h2>Login</h2>
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <button type="submit">Login</button>
-        <p><a href="enter_email.php">Forgot your password?</a></p>
-    </form>
-</body>
+<form id="form" method="get" action="<?php $_SERVER["PHP_SELF"]; ?>">
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" class="form-control size-medium" name="username" id="username">
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="text" class="form-control size-medium" name="password" id="password">
+    </div>
+    <div class="form-group">
+        <label for="submit"></label>
+        <input id="submit" type="submit" class="btn size-auto" value="Login" />
+    </div>
+</form>
 
-</html>
+<?php
+    require_once 'fw/footer.php';
+?>
