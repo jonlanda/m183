@@ -4,6 +4,17 @@ require_once 'config.php';
 // Constants for brute force protection
 $bad_login_limit = 3; // Number of allowed failed attempts
 $lockout_time = 10; // Lockout period in seconds (10 seconds)
+$username_error = "";
+$password_error = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (empty($_POST["username"])) {
+        $username_error = "Username is required";
+    }
+    if (empty($_POST["password"])) {
+        $password_error = "Password is required";
+    }
+}
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($_POST['password'])) {
@@ -52,7 +63,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($
             $current_time = time();
             $last_login_time = date("Y-m-d H:i:s", $current_time);
 
-            //ehco $current_time - strtotime($last_login) > $lockout_time
 
 
             if ($last_login == 0 || $current_time - strtotime($last_login) > $lockout_time) {
@@ -75,10 +85,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['username']) && isset($
                 echo "<script>alert('You are currently locked out. Please try again later.');</script>";
                 exit;
             }
+
+            $password_error = "Invalid password";
         
         }
     } else {
-        echo "Username does not exist";
+        $username_error = "Username does not exist";
     }
 
     $stmt->close();
@@ -89,13 +101,17 @@ require_once 'fw/header.php';
 <!-- Login Form -->
 <h2>Login</h2>
 <form id="form" method="post" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
-    <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" class="form-control size-medium" name="username" id="username">
+    <div class="flex">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control size-medium" name="username" id="username">
+        </div>
+        <span class="error"><?php echo $username_error;?></span>
     </div>
     <div class="form-group">
         <label for="password">Password</label>
         <input type="password" class="form-control size-medium" name="password" id="password">
+        <span class="error"><?php echo $password_error;?></span>
     </div>
     <div class="form-group">
         <input type="submit" class="btn size-auto" value="Login" />
