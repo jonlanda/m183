@@ -12,6 +12,11 @@ Bevor mit `docker compose up` die Applikation gestartet wird, muss der Source-Pf
 
 - [x] SQL Injection
 - [x] Password Hashing not implemented
+- XSS
+- No Session Handling / Broken Auth
+- No Role Based Authorization
+- Setting unsecure cookies
+- Timing Attacks
 
 ## Password Plaintext
 
